@@ -38,13 +38,12 @@ func (r *AuthRepository) Register(newData *domain.UserModel) (*domain.UserModel,
 func (r *AuthRepository) Login(email, password string) (*domain.UserModel, error) {
 	var user domain.UserModel
 	if err := r.db.Where("email = ?", email).First(&user).Error; err != nil {
-		return nil, errors.New("User not found")
+		return nil, errors.New("user not found")
 	}
 
 	isValidPassword, err := utils.ComparePassword(user.Password, password)
 	if err != nil || !isValidPassword {
-		return nil, errors.New("Invalid password")
+		return nil, errors.New("invalid password")
 	}
-	// Kembalikan pengguna setelah berhasil login
 	return &user, nil
 }

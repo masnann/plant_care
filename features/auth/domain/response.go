@@ -6,9 +6,6 @@ type RegisterResponse struct {
 }
 
 type LoginResponse struct {
-	ID           uint64 `json:"id"`
-	Username     string `json:"username"`
-	Email        string `json:"email"`
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
+	Email       string `json:"email"`
+	AccessToken string `json:"access_token"`
 }

@@ -12,11 +12,10 @@ type RepoAuthInterface interface {
 
 type ServiceAuthInterface interface {
 	Register(newData *domain.UserModel) (*domain.UserModel, error)
-	Login(email, password string) (*domain.UserModel, string, string, error)
+	Login(email, password string) (*domain.UserModel, string, error)
 }
 
 type HandlerAuthInterface interface {
 	Register() echo.HandlerFunc
 	Login() echo.HandlerFunc
-	RefreshJWT() echo.HandlerFunc
 }

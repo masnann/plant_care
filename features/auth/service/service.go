@@ -26,16 +26,16 @@ func (s *AuthService) Register(newData *domain.UserModel) (*domain.UserModel, er
 	return result, nil
 }
 
-func (s *AuthService) Login(email, password string) (*domain.UserModel, string, string, error) {
+func (s *AuthService) Login(email, password string) (*domain.UserModel, string, error) {
 	user, err := s.repo.Login(email, password)
 	if err != nil {
-		return nil, "", "", err
+		return nil, "", err
 	}
 
-	accessToken, refreshToken, err := s.utils.GenerateJWT(user.ID)
+	accessToken, err := s.utils.GenerateJWT(user.ID)
 	if err != nil {
-		return nil, "", "", err
+		return nil, "", err
 	}
 
-	return user, accessToken, refreshToken, nil
+	return user, accessToken, nil
 }

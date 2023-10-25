@@ -2,7 +2,10 @@ package utils
 
 import (
 	"errors"
+	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/labstack/gommon/log"
+	"github.com/masnann/plant_care/config"
 	"github.com/sirupsen/logrus"
 	"time"
 )
@@ -10,7 +13,7 @@ import (
 type JWTInterface interface {
 	GenerateJWT(userID uint64) (string, string, error)
 	ValidateToken(tokenString string) (*jwt.Token, error)
-	GenerateRefreshJWT(accessToken *jwt.Token, refreshToken *jwt.Token) map[string]any
+	GenerateRefreshJWT(accessToken string, refreshToken *jwt.Token, signKey string) map[string]any
 }
 
 type JWT struct {
@@ -43,7 +46,7 @@ func (j *JWT) GenerateToken(id uint64) string {
 	var claims = jwt.MapClaims{}
 	claims["id"] = id
 	claims["iat"] = time.Now().Unix()
-	claims["exp"] = time.Now().Add(time.Minute * 1).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 
 	var sign = jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	validToken, err := sign.SignedString([]byte(j.signKey))
@@ -66,7 +69,7 @@ func (j *JWT) ValidateToken(tokenString string) (*jwt.Token, error) {
 
 	return token, nil
 }
-func (j *JWT) GenerateRefreshJWT(accessToken *jwt.Token, refreshToken *jwt.Token) map[string]any {
+func (j *JWT) GenerateRefreshJWT(accessToken string, refreshToken *jwt.Token, signKey string) map[string]any {
 	var result = map[string]any{}
 	expTime, err := refreshToken.Claims.GetExpirationTime()
 	logrus.Info(expTime)
@@ -75,13 +78,20 @@ func (j *JWT) GenerateRefreshJWT(accessToken *jwt.Token, refreshToken *jwt.Token
 		return nil
 	}
 	if refreshToken.Valid && expTime.Time.Compare(time.Now()) > 0 {
-		var newClaim = accessToken.Claims.(jwt.MapClaims)
+		var newClaim = jwt.MapClaims{}
 
+		newToken, err := jwt.ParseWithClaims(accessToken, newClaim, func(t *jwt.Token) (interface{}, error) {
+			return []byte(signKey), nil
+		})
+
+		if err != nil {
+			log.Error(err.Error())
+			return nil
+		}
+
+		newClaim = newToken.Claims.(jwt.MapClaims)
 		newClaim["iat"] = time.Now().Unix()
 		newClaim["exp"] = time.Now().Add(time.Hour * 1).Unix()
-
-		var newToken = jwt.NewWithClaims(accessToken.Method, newClaim)
-		newSignedToken, _ := newToken.SignedString(accessToken.Signature)
 
 		var newRefreshClaim = refreshToken.Claims.(jwt.MapClaims)
 		newRefreshClaim["exp"] = time.Now().Add(time.Hour * 24).Unix()
@@ -89,13 +99,14 @@ func (j *JWT) GenerateRefreshJWT(accessToken *jwt.Token, refreshToken *jwt.Token
 		var newRefreshToken = jwt.NewWithClaims(refreshToken.Method, newRefreshClaim)
 		newSignedRefreshToken, _ := newRefreshToken.SignedString(refreshToken.Signature)
 
-		result["access_token"] = newSignedToken
+		result["access_token"] = newToken.Raw
 		result["refresh_token"] = newSignedRefreshToken
 		return result
 	}
 
 	return nil
 }
+
 func (j *JWT) generateRefreshToken(userID uint64) (string, error) {
 	var claims = jwt.MapClaims{}
 	claims["id"] = userID
@@ -109,4 +120,29 @@ func (j *JWT) generateRefreshToken(userID uint64) (string, error) {
 	}
 
 	return refreshToken, nil
+}
+
+func ExtractToken(accessToken string) map[string]any {
+	cfg := config.InitConfig()
+
+	claims := jwt.MapClaims{}
+	token, err := jwt.ParseWithClaims(accessToken, &claims, func(t *jwt.Token) (interface{}, error) {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("Unexpected signing method")
+		}
+		return []byte(cfg.Secret), nil
+	})
+
+	if err != nil {
+		log.Error("Error Parsing Token : ", err.Error())
+		return nil
+	}
+
+	if token.Valid {
+		return map[string]any{
+			"user-id": claims["id"],
+		}
+	}
+
+	return nil
 }
