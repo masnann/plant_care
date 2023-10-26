@@ -6,20 +6,20 @@ import (
 	"strconv"
 
 	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 )
 
-var DB *gorm.DB
-
 type Config struct {
-	ServerPort    int
-	DBPort        int
-	DBHost        string
-	DBUser        string
-	DBPass        string
-	DBName        string
-	Secret        string
-	RefreshSecret string
+	ServerPort          int
+	DBPort              int
+	DBHost              string
+	DBUser              string
+	DBPass              string
+	DBName              string
+	Secret              string
+	CloudinaryCloudName string
+	CloudinaryAPIKey    string
+	CloudinaryAPISecret string
+	Folder              string
 }
 
 func InitConfig() *Config {
@@ -77,8 +77,19 @@ func loadConfig() *Config {
 	if val, found := os.LookupEnv("SECRET"); found {
 		res.Secret = val
 	}
-	if val, found := os.LookupEnv("REFSECRET"); found {
-		res.RefreshSecret = val
+	if value, found := os.LookupEnv("CLOUDINARY_CLOUD_NAME"); found {
+		res.CloudinaryCloudName = value
+	}
+
+	if value, found := os.LookupEnv("CLOUDINARY_API_KEY"); found {
+		res.CloudinaryAPIKey = value
+	}
+
+	if value, found := os.LookupEnv("CLOUDINARY_API_SECRET"); found {
+		res.CloudinaryAPISecret = value
+	}
+	if value, found := os.LookupEnv("FOLDER"); found {
+		res.Folder = value
 	}
 	return res
 }

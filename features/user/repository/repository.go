@@ -16,6 +16,17 @@ func NewUserRepository(db *gorm.DB) user.RepoUserInterface {
 		db: db,
 	}
 }
+func (r *UserRepository) GetUserById(userId uint64) (*domain.UserModel, error) {
+	var user domain.UserModel
+	if err := r.db.Where("id", userId).First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+
+			return nil, errors.New("id not found")
+		}
+		return nil, err
+	}
+	return &user, nil
+}
 
 func (r *UserRepository) GetAllUsers() ([]*domain.UserModel, error) {
 	var users []*domain.UserModel

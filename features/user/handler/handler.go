@@ -3,17 +3,20 @@ package handler
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/masnann/plant_care/features/user"
+	"github.com/masnann/plant_care/utils"
 	"github.com/masnann/plant_care/utils/response"
 	"net/http"
 )
 
 type UserHandler struct {
 	service user.ServiceUserInterface
+	jwt     utils.JWTInterface
 }
 
-func NewUserHandler(service user.ServiceUserInterface) user.HandlerUserInterface {
+func NewUserHandler(service user.ServiceUserInterface, jwt utils.JWTInterface) user.HandlerUserInterface {
 	return &UserHandler{
 		service: service,
+		jwt:     jwt,
 	}
 }
 
