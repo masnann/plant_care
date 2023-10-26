@@ -4,6 +4,7 @@ import (
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/masnann/plant_care/config"
+	"github.com/masnann/plant_care/features/assistant"
 	"github.com/masnann/plant_care/features/auth"
 	"github.com/masnann/plant_care/features/plant"
 	"github.com/masnann/plant_care/features/user"
@@ -31,4 +32,8 @@ func RoutePlant(e *echo.Echo, p plant.HandlerPlantInterface, jwtService utils.JW
 	e.POST("/plants", p.InsertPlants(), middlewares.AuthMiddleware(jwtService, userService))
 	e.PUT("/plants/updates/:id", p.UpdatePlants(), middlewares.AuthMiddleware(jwtService, userService))
 	e.DELETE("/plants/delete/:id", p.DeletePlants(), middlewares.AuthMiddleware(jwtService, userService))
+}
+
+func RouteAssistant(e *echo.Echo, a assistant.HandlerAssistantInterface, jwtService utils.JWTInterface, userService user.ServiceUserInterface) {
+	e.POST("/assistant", a.Assistant(), middlewares.AuthMiddleware(jwtService, userService))
 }

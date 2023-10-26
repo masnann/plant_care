@@ -268,7 +268,7 @@ func (h *PlantHandler) DeletePlants() echo.HandlerFunc {
 		var plantData domain.PlantModel
 		plantID, err := strconv.ParseUint(c.Param("id"), 10, 64)
 		if err != nil {
-			logrus.Fatal("Bad Request: Invalid plant ID", err.Error())
+			logrus.Error("Bad Request: Invalid plant ID", err.Error())
 			return response.SendErrorResponse(c, http.StatusBadRequest, "Bad Request: Invalid plant ID")
 		}
 
@@ -278,7 +278,7 @@ func (h *PlantHandler) DeletePlants() echo.HandlerFunc {
 
 		existingPlant, err := h.service.GetPlantsByID(uint(plantID))
 		if err != nil {
-			logrus.Fatal("Plant not found", err.Error())
+			logrus.Error("Plant not found", err.Error())
 			return response.SendErrorResponse(c, http.StatusNotFound, "Plant not found")
 		}
 
@@ -288,7 +288,7 @@ func (h *PlantHandler) DeletePlants() echo.HandlerFunc {
 
 		err = h.service.DeletePlants(plantID)
 		if err != nil {
-			logrus.Fatal("Internal server error", err.Error())
+			logrus.Error("Internal server error", err.Error())
 			return response.SendErrorResponse(c, http.StatusInternalServerError, "Internal Server Error")
 		}
 
