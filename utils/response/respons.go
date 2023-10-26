@@ -13,6 +13,10 @@ type SuccessResponse struct {
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 }
+type AssistantResponse struct {
+	Message string      `json:"message"`
+	Reply   interface{} `json:"reply"`
+}
 
 func SendErrorResponse(c echo.Context, status int, message string) error {
 	return c.JSON(status, ErrorResponse{
@@ -30,6 +34,13 @@ func SendSuccessResponse(c echo.Context, message string, data interface{}) error
 func SendDeleteResponse(c echo.Context, message string) error {
 	return c.JSON(http.StatusOK, ErrorResponse{
 		Message: message,
+	})
+}
+
+func SendAssistantResponse(c echo.Context, message string, reply interface{}) error {
+	return c.JSON(http.StatusOK, AssistantResponse{
+		Message: message,
+		Reply:   reply,
 	})
 }
 
