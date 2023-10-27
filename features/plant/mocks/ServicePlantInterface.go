@@ -154,25 +154,25 @@ func (_m *ServicePlantInterface) InsertPlants(_a0 *domain.PlantModel) (*domain.P
 	return r0, r1
 }
 
-// SearchPlantsByName provides a mock function with given fields: name
-func (_m *ServicePlantInterface) SearchPlantsByName(name string) ([]*domain.PlantModel, error) {
-	ret := _m.Called(name)
+// SearchPlantsByName provides a mock function with given fields: userID, name
+func (_m *ServicePlantInterface) SearchPlantsByName(userID uint64, name string) ([]*domain.PlantModel, error) {
+	ret := _m.Called(userID, name)
 
 	var r0 []*domain.PlantModel
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string) ([]*domain.PlantModel, error)); ok {
-		return rf(name)
+	if rf, ok := ret.Get(0).(func(uint64, string) ([]*domain.PlantModel, error)); ok {
+		return rf(userID, name)
 	}
-	if rf, ok := ret.Get(0).(func(string) []*domain.PlantModel); ok {
-		r0 = rf(name)
+	if rf, ok := ret.Get(0).(func(uint64, string) []*domain.PlantModel); ok {
+		r0 = rf(userID, name)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*domain.PlantModel)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(name)
+	if rf, ok := ret.Get(1).(func(uint64, string) error); ok {
+		r1 = rf(userID, name)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -180,25 +180,25 @@ func (_m *ServicePlantInterface) SearchPlantsByName(name string) ([]*domain.Plan
 	return r0, r1
 }
 
-// SearchPlantsByType provides a mock function with given fields: types
-func (_m *ServicePlantInterface) SearchPlantsByType(types string) ([]*domain.PlantModel, error) {
-	ret := _m.Called(types)
+// SearchPlantsByType provides a mock function with given fields: userIO, types
+func (_m *ServicePlantInterface) SearchPlantsByType(userIO uint64, types string) ([]*domain.PlantModel, error) {
+	ret := _m.Called(userIO, types)
 
 	var r0 []*domain.PlantModel
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string) ([]*domain.PlantModel, error)); ok {
-		return rf(types)
+	if rf, ok := ret.Get(0).(func(uint64, string) ([]*domain.PlantModel, error)); ok {
+		return rf(userIO, types)
 	}
-	if rf, ok := ret.Get(0).(func(string) []*domain.PlantModel); ok {
-		r0 = rf(types)
+	if rf, ok := ret.Get(0).(func(uint64, string) []*domain.PlantModel); ok {
+		r0 = rf(userIO, types)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]*domain.PlantModel)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(types)
+	if rf, ok := ret.Get(1).(func(uint64, string) error); ok {
+		r1 = rf(userIO, types)
 	} else {
 		r1 = ret.Error(1)
 	}

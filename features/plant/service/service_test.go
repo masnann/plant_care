@@ -14,6 +14,7 @@ func TestPlantService_SearchPlantsByType(t *testing.T) {
 	service := NewPlantService(repo)
 
 	t.Run("Success Case", func(t *testing.T) {
+		userId := uint64(1)
 		plantType := "Flower"
 
 		expectedPlants := []*domain.PlantModel{
@@ -28,9 +29,9 @@ func TestPlantService_SearchPlantsByType(t *testing.T) {
 				Type: "Flower",
 			},
 		}
-		repo.On("SearchPlantsByType", plantType).Return(expectedPlants, nil).Once()
+		repo.On("SearchPlantsByType", userId, plantType).Return(expectedPlants, nil).Once()
 
-		result, err := service.SearchPlantsByType(plantType)
+		result, err := service.SearchPlantsByType(userId, plantType)
 
 		assert.Nil(t, err)
 		assert.NotNil(t, result)
@@ -45,12 +46,13 @@ func TestPlantService_SearchPlantsByType(t *testing.T) {
 	})
 
 	t.Run("Failed Case", func(t *testing.T) {
+		userId := uint64(1)
 		plantType := "Tree"
 
 		expectedErr := errors.New("SearchPlantsByType")
-		repo.On("SearchPlantsByType", plantType).Return(nil, expectedErr).Once()
+		repo.On("SearchPlantsByType", userId, plantType).Return(nil, expectedErr).Once()
 
-		result, err := service.SearchPlantsByType(plantType)
+		result, err := service.SearchPlantsByType(userId, plantType)
 
 		assert.Error(t, err)
 		assert.Nil(t, result)
@@ -66,6 +68,7 @@ func TestPlantService_SearchPlantsByName(t *testing.T) {
 	service := NewPlantService(repo)
 
 	t.Run("Success Case", func(t *testing.T) {
+		userId := uint64(1)
 		plantName := "Rose"
 
 		expectedPlants := []*domain.PlantModel{
@@ -80,9 +83,9 @@ func TestPlantService_SearchPlantsByName(t *testing.T) {
 				Type: "Flower",
 			},
 		}
-		repo.On("SearchPlantsByName", plantName).Return(expectedPlants, nil).Once()
+		repo.On("SearchPlantsByName", userId, plantName).Return(expectedPlants, nil).Once()
 
-		result, err := service.SearchPlantsByName(plantName)
+		result, err := service.SearchPlantsByName(userId, plantName)
 
 		assert.Nil(t, err)
 		assert.NotNil(t, result)
@@ -97,12 +100,13 @@ func TestPlantService_SearchPlantsByName(t *testing.T) {
 	})
 
 	t.Run("Failed Case", func(t *testing.T) {
+		userId := uint64(1)
 		plantName := "Tree"
 
 		expectedErr := errors.New("SearchPlantsByName")
-		repo.On("SearchPlantsByName", plantName).Return(nil, expectedErr).Once()
+		repo.On("SearchPlantsByName", userId, plantName).Return(nil, expectedErr).Once()
 
-		result, err := service.SearchPlantsByName(plantName)
+		result, err := service.SearchPlantsByName(userId, plantName)
 
 		assert.Error(t, err)
 		assert.Nil(t, result)
