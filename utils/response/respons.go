@@ -53,6 +53,6 @@ func PaginationResponse(c echo.Context, data interface{}, totalItems, page, page
 
 	return c.JSON(http.StatusOK, SuccessResponse{
 		Message: message,
-		Data:    map[string]interface{}{"data": data, "pagination": pagination},
+		Data:    map[string]interface{}{"items": data, "pagination": pagination},
 	})
 }

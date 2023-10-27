@@ -18,6 +18,13 @@ type PlantHandler struct {
 	jwt     utils.JWTInterface
 }
 
+func NewPlantHandler(service plant.ServicePlantInterface, jwt utils.JWTInterface) plant.HandlerPlantInterface {
+	return &PlantHandler{
+		service: service,
+		jwt:     jwt,
+	}
+}
+
 func (h *PlantHandler) SearchPlantsByType() echo.HandlerFunc {
 	return func(c echo.Context) error {
 		types := c.QueryParam("types")
@@ -48,13 +55,6 @@ func (h *PlantHandler) SearchPlantsByType() echo.HandlerFunc {
 		} else {
 			return response.SendSuccessResponse(c, "Success", responsePlants)
 		}
-	}
-}
-
-func NewPlantHandler(service plant.ServicePlantInterface, jwt utils.JWTInterface) plant.HandlerPlantInterface {
-	return &PlantHandler{
-		service: service,
-		jwt:     jwt,
 	}
 }
 
