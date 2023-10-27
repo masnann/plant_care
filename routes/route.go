@@ -48,5 +48,11 @@ func RouteGuide(e *echo.Echo, g guide.HandlerGuideInterface) {
 
 func RouteNote(e *echo.Echo, n note.HandlerNoteInterface, jwtService utils.JWTInterface, userService user.ServiceUserInterface) {
 	e.POST("/notes", n.InsertNotes(), middlewares.AuthMiddleware(jwtService, userService))
+	e.GET("/notes", n.GetNotesWithPagination(), middlewares.AuthMiddleware(jwtService, userService))
+	e.PUT("/notes/updates/:id", n.UpdateNotes(), middlewares.AuthMiddleware(jwtService, userService))
+	e.DELETE("/notes/delete/:id", n.DeleteNotes(), middlewares.AuthMiddleware(jwtService, userService))
+
 	e.POST("/notes/photo", n.InsertNotePhoto(), middlewares.AuthMiddleware(jwtService, userService))
+	e.PUT("/notes/photos/updates/:id", n.UpdateNotesPhotos(), middlewares.AuthMiddleware(jwtService, userService))
+	e.DELETE("/notes/photos/delete/:id", n.DeleteNotesPhotos(), middlewares.AuthMiddleware(jwtService, userService))
 }

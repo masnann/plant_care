@@ -248,7 +248,7 @@ func TestPlantService_UpdatePlants(t *testing.T) {
 		updatedPlant := &domain.PlantModel{
 			ID:     plant.ID,
 			UserID: plant.UserID,
-			Name:   "Updated Rose",
+			Name:   plant.Name,
 			Type:   "Updated Flower",
 			Photo:  "updated_rose.jpg",
 		}
