@@ -86,17 +86,17 @@ func (r *PlantRepository) GetPlantsByUserID(userID uint64) ([]*domain.PlantModel
 	return plants, nil
 }
 
-func (r *PlantRepository) SearchPlantsByName(name string) ([]*domain.PlantModel, error) {
+func (r *PlantRepository) SearchPlantsByName(userID uint64, name string) ([]*domain.PlantModel, error) {
 	var plants []*domain.PlantModel
-	if err := r.db.Where("name LIKE ? AND deleted_at IS NULL", "%"+name+"%").Find(&plants).Error; err != nil {
+	if err := r.db.Where("user_id = ? AND name LIKE ? AND deleted_at IS NULL", userID, "%"+name+"%").Find(&plants).Error; err != nil {
 		return nil, err
 	}
 	return plants, nil
 }
 
-func (r *PlantRepository) SearchPlantsByType(types string) ([]*domain.PlantModel, error) {
+func (r *PlantRepository) SearchPlantsByType(userIO uint64, types string) ([]*domain.PlantModel, error) {
 	var plants []*domain.PlantModel
-	if err := r.db.Where("type LIKE ?", "%"+types+"%").Find(&plants).Error; err != nil {
+	if err := r.db.Where("user_id = ? AND type LIKE ?", userIO, "%"+types+"%").Find(&plants).Error; err != nil {
 		return nil, err
 	}
 	return plants, nil

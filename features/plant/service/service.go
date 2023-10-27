@@ -14,16 +14,16 @@ func NewPlantService(repo plant.RepoPlantInterface) plant.ServicePlantInterface 
 		repo: repo,
 	}
 }
-func (s *PlantService) SearchPlantsByType(types string) ([]*domain.PlantModel, error) {
-	result, err := s.repo.SearchPlantsByType(types)
+func (s *PlantService) SearchPlantsByType(userID uint64, types string) ([]*domain.PlantModel, error) {
+	result, err := s.repo.SearchPlantsByType(userID, types)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (s *PlantService) SearchPlantsByName(name string) ([]*domain.PlantModel, error) {
-	result, err := s.repo.SearchPlantsByName(name)
+func (s *PlantService) SearchPlantsByName(userID uint64, name string) ([]*domain.PlantModel, error) {
+	result, err := s.repo.SearchPlantsByName(userID, name)
 	if err != nil {
 		return nil, err
 	}

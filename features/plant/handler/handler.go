@@ -36,7 +36,7 @@ func (h *PlantHandler) SearchPlantsByType() echo.HandlerFunc {
 			return response.SendErrorResponse(c, http.StatusUnauthorized, "Unauthorized: You don't have permission")
 		}
 
-		plants, err := h.service.SearchPlantsByType(types)
+		plants, err := h.service.SearchPlantsByType(currentUser.ID, types)
 		if err != nil {
 			return response.SendErrorResponse(c, http.StatusInternalServerError, "Failed to search plants by type: "+err.Error())
 		}
@@ -69,7 +69,7 @@ func (h *PlantHandler) SearchPlantsByName() echo.HandlerFunc {
 			return response.SendErrorResponse(c, http.StatusUnauthorized, "Unauthorized: You don't have permission ")
 		}
 
-		plants, err := h.service.SearchPlantsByName(name)
+		plants, err := h.service.SearchPlantsByName(currentUser.ID, name)
 		if err != nil {
 			return response.SendErrorResponse(c, http.StatusInternalServerError, "Failed to search plants by name: "+err.Error())
 		}

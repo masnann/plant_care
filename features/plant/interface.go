@@ -12,8 +12,8 @@ type RepoPlantInterface interface {
 	UpdatePlants(plant *domain.PlantModel) (*domain.PlantModel, error)
 	GetPlantsByID(plantID uint) (*domain.PlantModel, error)
 	DeletePlants(plantID uint64) error
-	SearchPlantsByName(name string) ([]*domain.PlantModel, error)
-	SearchPlantsByType(types string) ([]*domain.PlantModel, error)
+	SearchPlantsByName(userID uint64, name string) ([]*domain.PlantModel, error)
+	SearchPlantsByType(userIO uint64, types string) ([]*domain.PlantModel, error)
 	CountPlants(userID uint64) (uint64, error)
 }
 
@@ -24,8 +24,8 @@ type ServicePlantInterface interface {
 	UpdatePlants(plant *domain.PlantModel) (*domain.PlantModel, error)
 	GetPlantsByID(plantID uint) (*domain.PlantModel, error)
 	DeletePlants(plantID uint64) error
-	SearchPlantsByName(name string) ([]*domain.PlantModel, error)
-	SearchPlantsByType(types string) ([]*domain.PlantModel, error)
+	SearchPlantsByName(userID uint64, name string) ([]*domain.PlantModel, error)
+	SearchPlantsByType(userIO uint64, types string) ([]*domain.PlantModel, error)
 	CountPlants(userID uint64) (uint64, error)
 }
 
