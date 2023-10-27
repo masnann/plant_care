@@ -6,6 +6,7 @@ import (
 	"github.com/masnann/plant_care/config"
 	"github.com/masnann/plant_care/features/assistant"
 	"github.com/masnann/plant_care/features/auth"
+	"github.com/masnann/plant_care/features/guide"
 	"github.com/masnann/plant_care/features/plant"
 	"github.com/masnann/plant_care/features/user"
 	"github.com/masnann/plant_care/middlewares"
@@ -36,4 +37,10 @@ func RoutePlant(e *echo.Echo, p plant.HandlerPlantInterface, jwtService utils.JW
 
 func RouteAssistant(e *echo.Echo, a assistant.HandlerAssistantInterface, jwtService utils.JWTInterface, userService user.ServiceUserInterface) {
 	e.POST("/assistant", a.Assistant(), middlewares.AuthMiddleware(jwtService, userService))
+}
+
+func RouteGuide(e *echo.Echo, g guide.HandlerGuideInterface) {
+	e.GET("/guide", g.GetGuidesWithPagination())
+	e.GET("/guide/:id", g.GetGuidesById())
+	e.GET("/guide/search", g.SearchGuideByName())
 }

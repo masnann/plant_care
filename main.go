@@ -10,6 +10,9 @@ import (
 	hAuth "github.com/masnann/plant_care/features/auth/handler"
 	rAuth "github.com/masnann/plant_care/features/auth/repository"
 	sAuth "github.com/masnann/plant_care/features/auth/service"
+	hGuide "github.com/masnann/plant_care/features/guide/handler"
+	rGuide "github.com/masnann/plant_care/features/guide/repository"
+	sGuide "github.com/masnann/plant_care/features/guide/service"
 	hPlant "github.com/masnann/plant_care/features/plant/handler"
 	rPlant "github.com/masnann/plant_care/features/plant/repository"
 	sPlant "github.com/masnann/plant_care/features/plant/service"
@@ -46,6 +49,10 @@ func main() {
 	authService := sAuth.NewAuthService(authRepo, jwtService)
 	authHandler := hAuth.NewAuthHandler(authService, userService, jwtService, *initConfig)
 
+	guideRepo := rGuide.NewGuideRepository(db)
+	guideService := sGuide.NewGuideService(guideRepo)
+	guideHandler := hGuide.NewGuideHandler(guideService)
+
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.CORS())
 	e.Use(middlewares.ConfigureLogging())
@@ -54,5 +61,6 @@ func main() {
 	routes.RouteAuth(e, authHandler, *initConfig)
 	routes.RoutePlant(e, plantHandler, jwtService, userService)
 	routes.RouteAssistant(e, assistantHandler, jwtService, userService)
+	routes.RouteGuide(e, guideHandler)
 	e.Logger.Fatalf(e.Start(fmt.Sprintf(":%d", initConfig.ServerPort)).Error())
 }
