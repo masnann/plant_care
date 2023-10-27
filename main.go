@@ -13,6 +13,9 @@ import (
 	hGuide "github.com/masnann/plant_care/features/guide/handler"
 	rGuide "github.com/masnann/plant_care/features/guide/repository"
 	sGuide "github.com/masnann/plant_care/features/guide/service"
+	hNote "github.com/masnann/plant_care/features/note/handler"
+	rNote "github.com/masnann/plant_care/features/note/repository"
+	sNote "github.com/masnann/plant_care/features/note/service"
 	hPlant "github.com/masnann/plant_care/features/plant/handler"
 	rPlant "github.com/masnann/plant_care/features/plant/repository"
 	sPlant "github.com/masnann/plant_care/features/plant/service"
@@ -53,6 +56,10 @@ func main() {
 	guideService := sGuide.NewGuideService(guideRepo)
 	guideHandler := hGuide.NewGuideHandler(guideService)
 
+	noteRepo := rNote.NewNoteRepository(db)
+	noteService := sNote.NewNoteService(noteRepo)
+	noteHandler := hNote.NewNoteHandler(noteService, plantService)
+
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.CORS())
 	e.Use(middlewares.ConfigureLogging())
@@ -62,5 +69,6 @@ func main() {
 	routes.RoutePlant(e, plantHandler, jwtService, userService)
 	routes.RouteAssistant(e, assistantHandler, jwtService, userService)
 	routes.RouteGuide(e, guideHandler)
+	routes.RouteNote(e, noteHandler, jwtService, userService)
 	e.Logger.Fatalf(e.Start(fmt.Sprintf(":%d", initConfig.ServerPort)).Error())
 }
