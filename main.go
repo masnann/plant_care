@@ -16,6 +16,9 @@ import (
 	hNote "github.com/masnann/plant_care/features/note/handler"
 	rNote "github.com/masnann/plant_care/features/note/repository"
 	sNote "github.com/masnann/plant_care/features/note/service"
+	hNotify "github.com/masnann/plant_care/features/notification/handler"
+	rNotify "github.com/masnann/plant_care/features/notification/repository"
+	sNotify "github.com/masnann/plant_care/features/notification/service"
 	hPlant "github.com/masnann/plant_care/features/plant/handler"
 	rPlant "github.com/masnann/plant_care/features/plant/repository"
 	sPlant "github.com/masnann/plant_care/features/plant/service"
@@ -41,9 +44,13 @@ func main() {
 	userService := sUser.NewUserService(userRepo)
 	userHandler := hUser.NewUserHandler(userService, jwtService)
 
+	notifyRepo := rNotify.NewNotificationRepository(db)
+	notifyService := sNotify.NewNotificationService(notifyRepo)
+	notifyHandler := hNotify.NewNotificationHandler(notifyService)
+
 	plantRepo := rPlant.NewPlantRepository(db)
 	plantService := sPlant.NewPlantService(plantRepo)
-	plantHandler := hPlant.NewPlantHandler(plantService, jwtService)
+	plantHandler := hPlant.NewPlantHandler(plantService, jwtService, notifyService)
 
 	assistantService := sAssistant.NewAssistantService()
 	assistantHandler := hAssistant.NewAssistantHandler(assistantService)
@@ -70,5 +77,6 @@ func main() {
 	routes.RouteAssistant(e, assistantHandler, jwtService, userService)
 	routes.RouteGuide(e, guideHandler)
 	routes.RouteNote(e, noteHandler, jwtService, userService)
+	routes.RouteNotify(e, notifyHandler, jwtService, userService)
 	e.Logger.Fatalf(e.Start(fmt.Sprintf(":%d", initConfig.ServerPort)).Error())
 }

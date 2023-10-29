@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/masnann/plant_care/features/notification"
 	"github.com/masnann/plant_care/features/plant"
 	"github.com/masnann/plant_care/features/plant/domain"
 	user "github.com/masnann/plant_care/features/user/domain"
@@ -16,12 +17,14 @@ import (
 type PlantHandler struct {
 	service plant.ServicePlantInterface
 	jwt     utils.JWTInterface
+	notify  notification.ServiceNotificationInterface
 }
 
-func NewPlantHandler(service plant.ServicePlantInterface, jwt utils.JWTInterface) plant.HandlerPlantInterface {
+func NewPlantHandler(service plant.ServicePlantInterface, jwt utils.JWTInterface, notify notification.ServiceNotificationInterface) plant.HandlerPlantInterface {
 	return &PlantHandler{
 		service: service,
 		jwt:     jwt,
+		notify:  notify,
 	}
 }
 
@@ -136,6 +139,12 @@ func (h *PlantHandler) InsertPlants() echo.HandlerFunc {
 
 		createdPlant, err := h.service.InsertPlants(newPlant)
 		if err != nil {
+			return response.SendErrorResponse(c, http.StatusInternalServerError, "Internal Server Error")
+		}
+
+		_, err = h.notify.InsertNotifications(c, newPlant.Name)
+		if err != nil {
+			logrus.Error("Error while sending notification:", err.Error())
 			return response.SendErrorResponse(c, http.StatusInternalServerError, "Internal Server Error")
 		}
 
