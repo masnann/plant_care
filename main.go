@@ -22,7 +22,6 @@ import (
 	hPlant "github.com/masnann/plant_care/features/plant/handler"
 	rPlant "github.com/masnann/plant_care/features/plant/repository"
 	sPlant "github.com/masnann/plant_care/features/plant/service"
-	hUser "github.com/masnann/plant_care/features/user/handler"
 	rUser "github.com/masnann/plant_care/features/user/repository"
 	sUser "github.com/masnann/plant_care/features/user/service"
 	"github.com/masnann/plant_care/middlewares"
@@ -42,7 +41,6 @@ func main() {
 
 	userRepo := rUser.NewUserRepository(db)
 	userService := sUser.NewUserService(userRepo)
-	userHandler := hUser.NewUserHandler(userService, jwtService)
 
 	notifyRepo := rNotify.NewNotificationRepository(db)
 	notifyService := sNotify.NewNotificationService(notifyRepo)
@@ -71,8 +69,7 @@ func main() {
 	e.Use(middleware.CORS())
 	e.Use(middlewares.ConfigureLogging())
 
-	routes.RouteUser(e, userHandler, *initConfig)
-	routes.RouteAuth(e, authHandler, *initConfig)
+	routes.RouteAuth(e, authHandler)
 	routes.RoutePlant(e, plantHandler, jwtService, userService)
 	routes.RouteAssistant(e, assistantHandler, jwtService, userService)
 	routes.RouteGuide(e, guideHandler)
