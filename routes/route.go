@@ -7,6 +7,8 @@ import (
 	"github.com/masnann/plant_care/features/assistant"
 	"github.com/masnann/plant_care/features/auth"
 	"github.com/masnann/plant_care/features/guide"
+	"github.com/masnann/plant_care/features/note"
+	"github.com/masnann/plant_care/features/notification"
 	"github.com/masnann/plant_care/features/plant"
 	"github.com/masnann/plant_care/features/user"
 	"github.com/masnann/plant_care/middlewares"
@@ -43,4 +45,19 @@ func RouteGuide(e *echo.Echo, g guide.HandlerGuideInterface) {
 	e.GET("/guide", g.GetGuidesWithPagination())
 	e.GET("/guide/:id", g.GetGuidesById())
 	e.GET("/guide/search", g.SearchGuideByName())
+}
+
+func RouteNote(e *echo.Echo, n note.HandlerNoteInterface, jwtService utils.JWTInterface, userService user.ServiceUserInterface) {
+	e.POST("/notes", n.InsertNotes(), middlewares.AuthMiddleware(jwtService, userService))
+	e.GET("/notes", n.GetNotesWithPagination(), middlewares.AuthMiddleware(jwtService, userService))
+	e.PUT("/notes/updates/:id", n.UpdateNotes(), middlewares.AuthMiddleware(jwtService, userService))
+	e.DELETE("/notes/delete/:id", n.DeleteNotes(), middlewares.AuthMiddleware(jwtService, userService))
+
+	e.POST("/notes/photo", n.InsertNotePhoto(), middlewares.AuthMiddleware(jwtService, userService))
+	e.PUT("/notes/photos/updates/:id", n.UpdateNotesPhotos(), middlewares.AuthMiddleware(jwtService, userService))
+	e.DELETE("/notes/photos/delete/:id", n.DeleteNotesPhotos(), middlewares.AuthMiddleware(jwtService, userService))
+}
+
+func RouteNotify(e *echo.Echo, n notification.HandlerNotificationInterface, jwtService utils.JWTInterface, userService user.ServiceUserInterface) {
+	e.GET("/notifications", n.GetPaginationNotifications(), middlewares.AuthMiddleware(jwtService, userService))
 }
