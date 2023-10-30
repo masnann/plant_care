@@ -8,6 +8,7 @@ import (
 	"github.com/masnann/plant_care/features/auth"
 	"github.com/masnann/plant_care/features/guide"
 	"github.com/masnann/plant_care/features/note"
+	"github.com/masnann/plant_care/features/notification"
 	"github.com/masnann/plant_care/features/plant"
 	"github.com/masnann/plant_care/features/user"
 	"github.com/masnann/plant_care/middlewares"
@@ -55,4 +56,8 @@ func RouteNote(e *echo.Echo, n note.HandlerNoteInterface, jwtService utils.JWTIn
 	e.POST("/notes/photo", n.InsertNotePhoto(), middlewares.AuthMiddleware(jwtService, userService))
 	e.PUT("/notes/photos/updates/:id", n.UpdateNotesPhotos(), middlewares.AuthMiddleware(jwtService, userService))
 	e.DELETE("/notes/photos/delete/:id", n.DeleteNotesPhotos(), middlewares.AuthMiddleware(jwtService, userService))
+}
+
+func RouteNotify(e *echo.Echo, n notification.HandlerNotificationInterface, jwtService utils.JWTInterface, userService user.ServiceUserInterface) {
+	e.GET("/notifications", n.GetPaginationNotifications(), middlewares.AuthMiddleware(jwtService, userService))
 }
