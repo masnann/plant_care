@@ -37,7 +37,7 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            docker stop ${{ secrets.CNAME }}
-            docker rm ${{ secrets.CNAME }}
-            docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/plant_care
-            docker run --name ${{ secrets.CNAME }} -p 8000:8000 -d -e DBHOST=${{secrets.DBHOST}} -e DBPORT=3306 -e DBUSER=${{secrets.DBUSER}} -e DBNAME=${{secrets.DBNAME}} -e DBPASS=${{secrets.DBPASS}} -e SECRET=${{secrets.SECRET}} -e CLOUDINARY_CLOUD_NAME=${{secrets.CLOUDINARY_CLOUD_NAME}} -e CLOUDINARY_API_KEY=${{secrets.CLOUDINARY_API_KEY}} -e CLOUDINARY_API_SECRET=${{secrets.CLOUDINARY_API_SECRET}} -e FOLDER=${{secrets.FOLDER}} -e APIKEY_OPENAI=${{secrets.APIKEY_OPENAI}} -e SERVER=8000 ${{ secrets.DOCKERHUB_USERNAME }}/plant_care
+            sudo docker stop ${{ secrets.CNAME }}
+            sudo docker rm ${{ secrets.CNAME }}
+            sudo docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/plant_care
+            sudo docker run --name ${{ secrets.CNAME }} -p 8000:8000 -d -e DBHOST=${{secrets.DBHOST}} -e DBPORT=3306 -e DBUSER=${{secrets.DBUSER}} -e DBNAME=${{secrets.DBNAME}} -e DBPASS=${{secrets.DBPASS}} -e SECRET=${{secrets.SECRET}} -e CLOUDINARY_CLOUD_NAME=${{secrets.CLOUDINARY_CLOUD_NAME}} -e CLOUDINARY_API_KEY=${{secrets.CLOUDINARY_API_KEY}} -e CLOUDINARY_API_SECRET=${{secrets.CLOUDINARY_API_SECRET}} -e FOLDER=${{secrets.FOLDER}} -e APIKEY_OPENAI=${{secrets.APIKEY_OPENAI}} -e SERVER=8000 ${{ secrets.DOCKERHUB_USERNAME }}/plant_care
