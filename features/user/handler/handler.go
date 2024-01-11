@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/masnann/plant_care/features/user"
+	"github.com/masnann/plant_care/features/user/domain"
 	"github.com/masnann/plant_care/utils"
 	"github.com/masnann/plant_care/utils/response"
 	"net/http"
@@ -47,5 +48,35 @@ func (h *UserHandler) GetUserByEmail() echo.HandlerFunc {
 		}
 
 		return response.SendSuccessResponse(c, "Success", user)
+	}
+}
+
+func (h *UserHandler) UpdatePassword() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var updateRequest domain.UpdatePasswordRequest
+		if err := c.Bind(&updateRequest); err != nil {
+			return c.JSON(http.StatusBadRequest, "Failed to bind data: Binding data to the struct failed")
+		}
+		if err := utils.ValidateStruct(updateRequest); err != nil {
+			return c.JSON(http.StatusBadRequest, "Validation failed: "+err.Error())
+		}
+		currentUser := c.Get("CurrentUser").(*domain.UserModel)
+		updateRequest.UserID = currentUser.ID
+
+		err := h.service.ValidatePassword(currentUser.ID, updateRequest.OldPassword, updateRequest.OldPassword)
+		if err != nil {
+			return response.SendErrorResponse(c, http.StatusInternalServerError, "Gagal memperbarui kata sandi: "+err.Error())
+		}
+
+		newPasswordHash, err := utils.GenerateHash(updateRequest.NewPassword)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, "Failed to generate hash for the new password")
+		}
+
+		err = h.service.UpdatePassword(currentUser.ID, newPasswordHash)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, "Failed to update the password: "+err.Error())
+		}
+		return c.JSON(http.StatusOK, "Password updated successfully")
 	}
 }

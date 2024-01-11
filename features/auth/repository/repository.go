@@ -32,6 +32,8 @@ func (r *AuthRepository) Register(newData *domain.UserModel) (*domain.UserModel,
 		return nil, err
 	}
 
+	newData.ID = dbData.ID
+
 	return newData, nil
 }
 
@@ -46,4 +48,37 @@ func (r *AuthRepository) Login(email, password string) (*domain.UserModel, error
 		return nil, errors.New("invalid password")
 	}
 	return &user, nil
+}
+
+func (r *AuthRepository) CheckOtp(email, code string) (*domain.OtpModels, error) {
+	var otp domain.OtpModels
+
+	if err := r.db.Where("email = ? AND code = ?", code, email).First(&otp).Error; err != nil {
+		return nil, err
+	}
+
+	return &otp, nil
+}
+
+func (r *AuthRepository) VerifyEmail(email string) error {
+	var user domain.UserModel
+
+	if err := r.db.Model(&user).Where("email = ?", email).Update("is_verified", true).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *AuthRepository) SaveOtp(userID uint64, email, otpCode string) error {
+	otp := domain.OtpModels{
+		UserID: userID,
+		Email:  email,
+		Code:   otpCode,
+	}
+
+	if err := r.db.Create(&otp).Error; err != nil {
+		return err
+	}
+	return nil
 }

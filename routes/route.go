@@ -16,6 +16,7 @@ import (
 func RouteAuth(e *echo.Echo, h auth.HandlerAuthInterface) {
 	e.POST("/auth/register", h.Register())
 	e.POST("/auth/login", h.Login())
+	e.GET("/verify-email", h.VerifyEmail())
 }
 
 func RoutePlant(e *echo.Echo, p plant.HandlerPlantInterface, jwtService utils.JWTInterface, userService user.ServiceUserInterface) {
@@ -50,4 +51,8 @@ func RouteNote(e *echo.Echo, n note.HandlerNoteInterface, jwtService utils.JWTIn
 
 func RouteNotify(e *echo.Echo, n notification.HandlerNotificationInterface, jwtService utils.JWTInterface, userService user.ServiceUserInterface) {
 	e.GET("/notifications", n.GetPaginationNotifications(), middlewares.AuthMiddleware(jwtService, userService))
+}
+
+func RouteUsers(e *echo.Echo, n user.HandlerUserInterface, jwtService utils.JWTInterface, userService user.ServiceUserInterface) {
+	e.POST("/change-pass", n.UpdatePassword(), middlewares.AuthMiddleware(jwtService, userService))
 }

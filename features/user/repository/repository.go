@@ -47,3 +47,23 @@ func (r *UserRepository) GetUserByEmail(email string) (*domain.UserModel, error)
 	}
 	return &user, nil
 }
+
+func (r *UserRepository) GetUsersPassword(oldPass string) (*domain.UserModel, error) {
+	var user domain.UserModel
+	if err := r.db.Where("password", oldPass).First(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+
+			return nil, errors.New("password lama salah")
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (r *UserRepository) UpdatePassword(userID uint64, newPasswordHash string) error {
+	var user domain.UserModel
+	if err := r.db.Model(&user).Where("id = ?", userID).Update("password", newPasswordHash).Error; err != nil {
+		return err
+	}
+	return nil
+}

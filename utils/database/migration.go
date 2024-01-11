@@ -10,5 +10,12 @@ import (
 )
 
 func Migrate(db *gorm.DB) {
-	db.AutoMigrate(domain.UserModel{}, plant.PlantModel{}, guide.GuideModel{}, note.NoteModel{}, note.PhotoModel{}, notify.NotificationModel{})
+	db.AutoMigrate(
+		domain.UserModel{},
+		plant.PlantModel{},
+		guide.GuideModel{},
+		note.NoteModel{},
+		note.PhotoModel{},
+		notify.NotificationModel{},
+		domain.OtpModels{})
 }

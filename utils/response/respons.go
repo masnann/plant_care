@@ -13,6 +13,7 @@ type SuccessResponse struct {
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
 }
+
 type AssistantResponse struct {
 	Message string      `json:"message"`
 	Reply   interface{} `json:"reply"`

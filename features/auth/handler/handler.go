@@ -90,3 +90,21 @@ func (h *AuthHandler) Login() echo.HandlerFunc {
 		return response.SendSuccessResponse(c, "Login successful", userLogin)
 	}
 }
+
+func (h *AuthHandler) VerifyEmail() echo.HandlerFunc {
+	return func(c echo.Context) error {
+		email := c.QueryParam("code")
+		code := c.QueryParam("email")
+
+		if email == "" || code == "" {
+			return response.SendErrorResponse(c, http.StatusBadRequest, "Email dan kode verifikasi diperlukan")
+		}
+
+		err := h.service.VerifyEmail(email, code)
+		if err != nil {
+			return response.SendErrorResponse(c, http.StatusInternalServerError, "Internal Server Error: "+err.Error())
+		}
+
+		return c.JSON(http.StatusOK, "berhasil")
+	}
+}

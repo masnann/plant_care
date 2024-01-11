@@ -22,12 +22,15 @@ import (
 	hPlant "github.com/masnann/plant_care/features/plant/handler"
 	rPlant "github.com/masnann/plant_care/features/plant/repository"
 	sPlant "github.com/masnann/plant_care/features/plant/service"
+	hUser "github.com/masnann/plant_care/features/user/handler"
 	rUser "github.com/masnann/plant_care/features/user/repository"
 	sUser "github.com/masnann/plant_care/features/user/service"
 	"github.com/masnann/plant_care/middlewares"
 	"github.com/masnann/plant_care/routes"
 	"github.com/masnann/plant_care/utils"
 	"github.com/masnann/plant_care/utils/database"
+	email2 "github.com/masnann/plant_care/utils/email"
+	"net/http"
 )
 
 func main() {
@@ -38,9 +41,12 @@ func main() {
 	database.Migrate(db)
 
 	jwtService := utils.NewJWT(initConfig.Secret)
+	email := email2.NewSMTPEmailService()
+	otp := email2.NewCodeGenerator()
 
 	userRepo := rUser.NewUserRepository(db)
 	userService := sUser.NewUserService(userRepo)
+	userHandler := hUser.NewUserHandler(userService, jwtService)
 
 	notifyRepo := rNotify.NewNotificationRepository(db)
 	notifyService := sNotify.NewNotificationService(notifyRepo)
@@ -54,7 +60,7 @@ func main() {
 	assistantHandler := hAssistant.NewAssistantHandler(assistantService)
 
 	authRepo := rAuth.NewAuthRepository(db)
-	authService := sAuth.NewAuthService(authRepo, jwtService)
+	authService := sAuth.NewAuthService(authRepo, jwtService, email, otp)
 	authHandler := hAuth.NewAuthHandler(authService, userService, jwtService, *initConfig)
 
 	guideRepo := rGuide.NewGuideRepository(db)
@@ -66,8 +72,15 @@ func main() {
 	noteHandler := hNote.NewNoteHandler(noteService, plantService)
 
 	e.Pre(middleware.RemoveTrailingSlash())
-	e.Use(middleware.CORS())
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{http.MethodGet, http.MethodPut, http.MethodPost, http.MethodDelete},
+	}))
 	e.Use(middlewares.ConfigureLogging())
+
+	e.GET("/", func(c echo.Context) error {
+		return c.String(http.StatusOK, "Hello, Plant Care! 🦄✨🍩")
+	})
 
 	routes.RouteAuth(e, authHandler)
 	routes.RoutePlant(e, plantHandler, jwtService, userService)
@@ -75,5 +88,7 @@ func main() {
 	routes.RouteGuide(e, guideHandler)
 	routes.RouteNote(e, noteHandler, jwtService, userService)
 	routes.RouteNotify(e, notifyHandler, jwtService, userService)
+	routes.RouteUsers(e, userHandler, jwtService, userService)
+
 	e.Logger.Fatalf(e.Start(fmt.Sprintf(":%d", initConfig.ServerPort)).Error())
 }
